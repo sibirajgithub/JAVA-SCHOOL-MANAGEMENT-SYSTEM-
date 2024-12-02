@@ -1,0 +1,186 @@
+import java.awt.*;
+import java.awt.event.*;
+import java.util.ArrayList;
+// Define the Student class
+class Student {
+private String name;
+private int id;
+private String gradeLevel;
+private ArrayList<String> courses;
+private ArrayList<String> grades;
+public Student(String name, int id, String gradeLevel) {
+this.name = name;
+this.id = id;
+this.gradeLevel = gradeLevel;
+this.courses = new ArrayList<>();
+this.grades = new ArrayList<>();
+}
+// Getters and setters
+public String getName() {
+return name;
+}
+public int getId() {
+return id;
+}
+public String getGradeLevel() {
+return gradeLevel;
+}
+public void setGradeLevel(String gradeLevel) {
+this.gradeLevel = gradeLevel;
+}
+public void addCourse(String course, String grade) {
+this.courses.add(course);
+this.grades.add(grade);
+}
+public void updateCourseGrade(String course, String newGrade) {
+int index = courses.indexOf(course);
+if (index != -1) {
+grades.set(index, newGrade);
+}
+}
+public String displayStudentRecord() {
+StringBuilder record = new StringBuilder();
+record.append("Student Name: ").append(name)
+.append("\nStudent ID: ").append(id)
+.append("\nGrade Level: ").append(gradeLevel)
+.append("\nCourses & Grades: \n");
+for (int i = 0; i < courses.size(); i++) {
+record.append(courses.get(i)).append(": ").append(grades.get(i)).append("\n");
+}
+return record.toString();
+}
+}
+// School Management System class
+class SchoolManagementSystem {
+private ArrayList<Student> students;
+private int nextId;
+public SchoolManagementSystem() {
+students = new ArrayList<>();
+nextId = 1; // Start student IDs from 1
+}
+public void enrollStudent(String name, String gradeLevel) {
+Student newStudent = new Student(name, nextId, gradeLevel);
+students.add(newStudent);
+nextId++; // Increment ID for the next student
+}
+public Student findStudentById(int id) {
+for (Student student : students) {
+if (student.getId() == id) {
+return student;
+}
+}
+return null; // If student not found
+}
+public void updateStudentGradeLevel(int id, String newGradeLevel) {
+Student student = findStudentById(id);
+if (student != null) {
+student.setGradeLevel(newGradeLevel);
+}
+}
+public void addCourseToStudent(int id, String course, String grade) {
+Student student = findStudentById(id);
+if (student != null) {
+student.addCourse(course, grade);
+}
+}
+public String displayStudentRecords() {
+StringBuilder records = new StringBuilder();
+for (Student student : students) {
+records.append(student.displayStudentRecord()).append("\n-----------------------------
+------\n");
+}
+return records.toString();
+}
+}
+// Main AWT Application
+public class SchoolSystemAppAWT {
+public static void main(String[] args) {
+Frame frame = new Frame("School Management System");
+// School management system instance
+SchoolManagementSystem sms = new SchoolManagementSystem();
+// Components for the AWT GUI
+Label labelName = new Label("Student Name: ");
+Label labelGradeLevel = new Label("Grade Level: ");
+Label labelCourse = new Label("Course Name: ");
+Label labelGrade = new Label("Course Grade: ");
+TextField textName = new TextField();
+TextField textGradeLevel = new TextField();
+TextField textCourse = new TextField();
+TextField textGrade = new TextField();
+TextArea textAreaDisplay = new TextArea();
+Button btnEnroll = new Button("Enroll Student");
+Button btnUpdateGradeLevel = new Button("Update Grade Level");
+Button btnAddCourse = new Button("Add Course & Grade");
+Button btnDisplayRecords = new Button("Display All Records");
+Button btnExit = new Button("Exit");
+// Layout setup
+frame.setLayout(new FlowLayout());
+frame.setSize(400, 400);
+// Add components to frame
+frame.add(labelName);
+frame.add(textName);
+frame.add(labelGradeLevel);
+frame.add(textGradeLevel);
+frame.add(btnEnroll);
+frame.add(labelCourse);
+frame.add(textCourse);
+frame.add(labelGrade);
+frame.add(textGrade);
+frame.add(btnAddCourse);
+frame.add(btnUpdateGradeLevel);
+frame.add(btnDisplayRecords);
+frame.add(textAreaDisplay);
+frame.add(btnExit);
+// Action Listeners for buttons
+btnEnroll.addActionListener(new ActionListener() {
+public void actionPerformed(ActionEvent e) {
+String name = textName.getText();
+String gradeLevel = textGradeLevel.getText();
+if (!name.isEmpty() && !gradeLevel.isEmpty()) {
+sms.enrollStudent(name, gradeLevel);
+textName.setText("");
+textGradeLevel.setText("");
+textAreaDisplay.setText("Student Enrolled: " + name);
+}
+}
+});
+btnUpdateGradeLevel.addActionListener(new ActionListener() {
+public void actionPerformed(ActionEvent e) {
+String gradeLevel = textGradeLevel.getText();
+try {
+int id = Integer.parseInt(textName.getText());
+sms.updateStudentGradeLevel(id, gradeLevel);
+textAreaDisplay.setText("Grade level updated for student ID: " + id);
+} catch (NumberFormatException ex) {
+textAreaDisplay.setText("Invalid student ID");
+}
+}
+});
+btnAddCourse.addActionListener(new ActionListener() {
+public void actionPerformed(ActionEvent e) {
+String course = textCourse.getText();
+String grade = textGrade.getText();
+try {
+int id = Integer.parseInt(textName.getText());
+sms.addCourseToStudent(id, course, grade);
+textAreaDisplay.setText("Course " + course + " added for student ID: " + id);
+} catch (NumberFormatException ex) {
+textAreaDisplay.setText("Invalid student ID");
+}
+}
+});
+btnDisplayRecords.addActionListener(new ActionListener() {
+public void actionPerformed(ActionEvent e) {
+textAreaDisplay.setText(sms.displayStudentRecords());
+}
+});
+btnExit.addActionListener(new ActionListener() {
+public void actionPerformed(ActionEvent e) {
+System.exit(0); // Exit the application
+}
+});
+// Frame setup
+frame.setVisible(true);
+ }
+ }
+
